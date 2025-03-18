@@ -29,9 +29,15 @@ function App() {
       ...product,
       quantity: 1,
     }]);
+  };
+
+  const removeFromCart = product => {
+    setAddedProducts(curr => curr.filter(p => p.name !== product.name));
   }
 
   console.log(addedProducts)
+
+  const totalToPay = addedProducts.reduce((acc, p) => acc + (p.price * p.quantity), 0);
 
   return (
     <>
@@ -45,18 +51,22 @@ function App() {
             <button onClick={() => addToCart(p)}>Aggiungi al carrello</button>
           </li>
         ))}
+
       </ul>
       {addedProducts.length > 0 && (<>
-        <h2>Carrello</h2>
+        <h2 className="debug">Carrello</h2>
         <ul>
           {addedProducts.map((p, i) => (
-            <li key={i}>
+            <li key={i} className="debug">
               <p>{p.quantity} x {p.name} - {p.price} €</p>
+              <button onClick={() => removeFromCart(p)}>Rimuovi dal carrello</button>
             </li>
           )
 
           )}
         </ul>
+
+        <h3>Totale da pagare: {totalToPay} €</h3>
       </>)}
     </>
   )
