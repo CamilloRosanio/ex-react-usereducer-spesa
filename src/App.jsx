@@ -10,12 +10,19 @@ function App() {
   ];
 
   const [addedProducts, setAddedProducts] = useState([]);
-  console.log(addedProducts);
+
+  const updateProductQuantity = (name, quantity) => {
+    setAddedProducts(curr =>
+      curr.map(p => p.name === name ? { ...p, quantity } : p)
+    );
+  }
 
   const addToCart = product => {
-    const isProductAlreadyAdded = addedProducts.some(p => p.name === product.name);
+    const alreadyAddedProduct = addedProducts.find(p => p.name === product.name);
+    // Nella videolezione è chiamato "addedProduct"
 
-    if (isProductAlreadyAdded) {
+    if (alreadyAddedProduct) {
+      updateProductQuantity(alreadyAddedProduct.name, alreadyAddedProduct.quantity + 1)
       return;
     }
     setAddedProducts(curr => [...curr, {
@@ -23,8 +30,6 @@ function App() {
       quantity: 1,
     }]);
   }
-
-
 
   console.log(addedProducts)
 
@@ -41,6 +46,18 @@ function App() {
           </li>
         ))}
       </ul>
+      {addedProducts.length > 0 && (<>
+        <h2>Carrello</h2>
+        <ul>
+          {addedProducts.map((p, i) => (
+            <li key={i}>
+              <p>{p.quantity} x {p.name} - {p.price} €</p>
+            </li>
+          )
+
+          )}
+        </ul>
+      </>)}
     </>
   )
 };
