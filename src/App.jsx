@@ -1,4 +1,4 @@
-import { useReducer } from "react";
+import { useReducer, useState, useEffect, useMemo } from "react";
 
 // CREAZIONE REDUCER
 /*
@@ -53,7 +53,30 @@ function App() {
 
   const [addedProducts, dispatchCart] = useReducer(cartReducer, []);
 
+  // TOTALE COSTI
+
+  // V1 - RICALCOLO AD OGNI AGGIORNAMENTO
+  /* In questo caso ogni volta che si ricarica il componente React, la somma viene ricalcolata.
+  Questo potrebbe risultare in uno spreco di risorse e bassa efficienza.
+  Per casi di variabili che si ricalcolano spesso, e magari utilizzano grandi fonti di dati,
+  React mette a disposizione 2 soluzioni (riportate sotto). */
   const totalToPay = addedProducts.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+
+  // V2 - USE-STATE + USE-EFFECT
+  /*Si può usare una combinazione di questi due HOOK. Ciò richiede la creazione di uno Use-state aggiuntivo.*/
+  const [totaleV2, setTotaleV2] = useState(0);
+  useEffect(() => {
+    setTotaleV2(addedProducts.reduce((acc, p) => acc + (p.price * p.quantity), 0));
+  }, addedProducts)
+
+  // V3 - USE-MEMO
+  /* Questo HOOK fornito da REACT serve esattamente per evitare sprechi di risorse e inutili ripetizioni
+  di calcoli complessi. In questo caso torna utile per il Totale della spesa, che al momento è un calcolo "leggero".
+  Se però immaginiamo migliaia di prodotti in lista, le cose cambiano, e allora possiamo salvare il valore "in memoria"
+  proprio tramite questo HOOK. */
+  const totaleV3 = useMemo(() => {
+    return addedProducts.reduce((acc, p) => acc + (p.price * p.quantity), 0);
+  }, addedProducts)
 
   return (
     <>
